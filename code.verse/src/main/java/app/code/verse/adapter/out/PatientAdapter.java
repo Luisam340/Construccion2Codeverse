@@ -25,13 +25,19 @@ public class PatientAdapter implements PatientPort {
     }
 
     @Override
-    public void deleteById(Patient patient) throws Exception {
+    public Patient deleteById(Patient patient) throws Exception {
+        PatientEntity patientEntity = patientRepository.findByIdNumber(patient.getIdNumber());
+        patientRepository.delete(patientEntity);
+        return PatientMapper.toDomain(patientEntity);
 
     }
 
     @Override
-    public void update(Patient patient) throws Exception {
-
+    public Patient update(Patient patient) throws Exception {
+        PatientEntity entityToUpdate = patientRepository.findByIdNumber(patient.getIdNumber()) ;
+        PatientMapper.partialUpdate(patient, entityToUpdate);
+        PatientEntity save = patientRepository.save(entityToUpdate);
+        return PatientMapper.toDomain(save);
     }
 
     @Override

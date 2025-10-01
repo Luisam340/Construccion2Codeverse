@@ -15,7 +15,7 @@ public class EmployeeMapper{
         entity.setPhoneNumber(employee.getPhoneNumber());
         entity.setBirthDate(employee.getBirthDate());
         entity.setAddress(employee.getAddress());
-        entity.setRol(employee.getRole());
+        entity.setRol(employee.getRol());
         entity.setPassword(employee.getPassword());
         entity.setUserName(employee.getUserName());
         return entity;
@@ -31,7 +31,7 @@ public class EmployeeMapper{
         employee.setPhoneNumber(employeeEntity.getPhoneNumber());
         employee.setBirthDate(employeeEntity.getBirthDate());
         employee.setAddress(employeeEntity.getAddress());
-        employee.setRole(employeeEntity.getRol());
+        employee.setRol(employeeEntity.getRol());
         employee.setPassword(employeeEntity.getPassword());
         employee.setUserName(employeeEntity.getUserName());
         return employee;
@@ -43,7 +43,7 @@ public class EmployeeMapper{
         if (source.getPhoneNumber() != null) employee.setPhoneNumber(source.getPhoneNumber());
         if (source.getBirthDate() != null) employee.setBirthDate(source.getBirthDate());
         if (source.getAddress() != null) employee.setAddress(source.getAddress());
-        if (source.getRole() != null) employee.setRol(source.getRole());
+        if (source.getRol() != null) employee.setRol(source.getRol());
         if (source.getUserName() != null) employee.setUserName(source.getUserName());
         if (source.getPassword() != null) employee.setPassword(source.getPassword());
     }

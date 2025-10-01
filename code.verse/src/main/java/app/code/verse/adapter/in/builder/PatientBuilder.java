@@ -28,4 +28,14 @@ public class PatientBuilder {
         patient.setStatus(true);
         return patient;
     }
+
+    public Patient update(Patient patient, String name, LocalDate birthDate, String gender, String address, String phoneNumber, String email) throws Exception {
+        patient.setName(name);
+        patient.setBirthDate(birthDate);
+        patient.setGender(gender);
+        patient.setAddress(address);
+        patient.setPhoneNumber(phoneNumber);
+        patient.setEmail(email);
+        return patient;
+    }
 }

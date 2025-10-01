@@ -24,7 +24,7 @@ public class EmployeeBuilder {
         employee.setPhoneNumber(personValidator.phoneNumberValidator(phoneNumber));
         employee.setBirthDate(personValidator.birthDateValidator(birthDate));
         employee.setAddress(personValidator.addressValidator(addres));
-        employee.setRole(employeeValidator.roleValidator(rol));
+        employee.setRol(employeeValidator.roleValidator(rol));
         employee.setUserName(employeeValidator.userNameValidator(userName));
         employee.setPassword(employeeValidator.passwordValidator(passwoord));
         employee.setStatus(true);
@@ -37,7 +37,7 @@ public class EmployeeBuilder {
         employee.setPhoneNumber(phoneNumber);
         employee.setBirthDate(birthDate);
         employee.setAddress(addres);
-        employee.setRole(rol);
+        employee.setRol(rol);
         employee.setUserName(userName);
         employee.setPassword(passwoord);
         return employee;

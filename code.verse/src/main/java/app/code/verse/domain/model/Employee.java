@@ -1,7 +1,7 @@
 package app.code.verse.domain.model;
 
 public class Employee extends Person {
-    private String role;
+    private String rol;
     private String userName;
     private String password;
 
@@ -9,12 +9,12 @@ public class Employee extends Person {
 
     }
 
-    public String getRole() {
-        return role;
+    public String getRol() {
+        return rol;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRol(String role) {
+        this.rol = rol;
     }
 
     public String getUserName() {

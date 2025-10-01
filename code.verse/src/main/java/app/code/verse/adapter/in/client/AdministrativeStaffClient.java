@@ -2,7 +2,6 @@ package app.code.verse.adapter.in.client;
 
 import app.code.verse.adapter.in.builder.PatientBuilder;
 import app.code.verse.application.usecases.AdministrativeStaffUseCase;
-import app.code.verse.domain.model.Employee;
 import app.code.verse.domain.model.Patient;
 import app.code.verse.domain.model.enums.Gender;
 import app.code.verse.domain.model.enums.Rol;
@@ -24,7 +23,7 @@ public class AdministrativeStaffClient {
     Scanner reader = new Scanner(System.in);
     private static final String HEADER = "| %-20s | %-20s | %-20s | %-20s |%n";
     private static final String ROW_FORMAT = "| %-20s | %-20s | %-20s | %-20s |%n";
-    private static final String MENU = "Ingrese una opción:\n1. Registrar paciente.\n2. Mostar todos los pacientes.git \n3. Buscar paciente por número de documento.\n4. Buscar paciente por nombre.\n5. Actualizar paciente.\n6. Eliminar paciente.";
+    private static final String MENU = "Ingrese una opción:\n1. Registrar paciente.\n2. Mostar todos los pacientes. \n3. Buscar paciente por número de documento.\n4. Buscar paciente por nombre.\n5. Actualizar paciente.\n6. Eliminar paciente.\n7. Salir.";
 
     public void session() {
         boolean session = true;
@@ -68,13 +67,14 @@ public class AdministrativeStaffClient {
             case "5":
                 System.out.println("Ingrese el número de documento del paciente que desea actualizar");
                 idNumber = reader.nextLine();
-
+                patient = updatePatientInformtion(idNumber);
+                staffUseCase.updatePatient(patient);
 
                 return true;
             case "6":
                 System.out.println("Ingrese el número de documento del paciente que desea eliminar");
                 idNumber = reader.nextLine();
-
+                deletePatient(idNumber);
 
                 return true;
 
@@ -101,6 +101,38 @@ public class AdministrativeStaffClient {
         System.out.println("Ingrese la dirección del paciente.");
         address = reader.nextLine();
         return patientBuilder.build(idNumber, name, birthDate, gender, address, phoneNumber, email);
+    }
+
+    private Patient updatePatientInformtion(String idNumber) throws Exception {
+        Patient patient = getPatientById(idNumber);
+        String name, email, phoneNumber, address, gender, date;
+        LocalDate birthDate;
+
+        System.out.println("Ingrese el nombre del paciente.");
+        name = reader.nextLine();
+        name = (name == null || name.isEmpty()) ? patient.getName() : name;
+
+        System.out.println("Ingrese el correo electrónico del paciente.");
+        email = reader.nextLine();
+        email = (email == null || email.isEmpty()) ? patient.getEmail() : email;
+
+        System.out.println("Ingrese el número de telefono del paciente.");
+        phoneNumber = reader.nextLine();
+        phoneNumber = (phoneNumber == null || phoneNumber.isEmpty() ? patient.getPhoneNumber() : phoneNumber);
+
+        System.out.println("Seleccione el género del paciente");
+        gender = selectGender();
+        gender = (gender == null || gender.isEmpty() ? patient.getGender() : gender);
+
+        System.out.println("Ingrese la fecha de nacimiento del paciente. (Formato: yyyy-MM-dd))");
+        date = reader.nextLine();
+        birthDate = (date == null || date.isEmpty() ? patient.getBirthDate() : LocalDate.parse(date));
+
+        System.out.println("Ingrese la dirección del paciente.");
+        address = reader.nextLine();
+        address = (address == null || address.isEmpty() ? patient.getAddress() : address);
+
+        return patientBuilder.update(patient, name, birthDate, gender, address, phoneNumber, email);
     }
 
     private String selectGender() {
@@ -153,7 +185,7 @@ public class AdministrativeStaffClient {
         }
     }
 
-    private void getPatientById(String document) throws Exception {
+    private Patient getPatientById(String document) throws Exception {
         System.out.println("Pacientes");
         Patient patient = staffUseCase.findById(document);
         if (patient == null) {
@@ -162,6 +194,12 @@ public class AdministrativeStaffClient {
             System.out.printf(HEADER, "Documento", "Nombre", "Teléfono", "Dirección");
             System.out.printf(ROW_FORMAT, patient.getIdNumber(), patient.getName(), patient.getPhoneNumber(), patient.getAddress());
         }
+        return patient;
+    }
+
+    private void deletePatient(String document) throws Exception {
+        Patient patient = getPatientById(document);
+        staffUseCase.deletePatient(patient);
     }
 
 

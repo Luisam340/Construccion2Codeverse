@@ -1,6 +1,5 @@
 package app.code.verse.application.usecases;
 
-import app.code.verse.domain.model.Employee;
 import app.code.verse.domain.model.Patient;
 import app.code.verse.domain.ports.PatientPort;
 import app.code.verse.domain.services.RegisterPatient;
@@ -43,6 +42,23 @@ public class AdministrativeStaffUseCase {
         return patient;
     }
 
+    public Patient updatePatient(Patient patient) throws Exception {
+        if (findById(patient.getIdNumber()) == null) {
+            throw new IllegalArgumentException("Paciente no encontrado");
+        }
+        patientPort.update(patient);
+        return patient;
+    }
+
+    public void deletePatient(Patient patient) throws Exception {
+        if (findById(patient.getIdNumber()) == null) {
+            throw new IllegalArgumentException("Paciente no encontrado");
+        }
+        patientPort.deleteById(patient);
+        //deletePolicy(patient.getIdNumber());
+        //deleteEmergencyContact(patient.getIdNumber());
+    }
+
    /* public void createPolicy(Policy policy, Patient patient) throws Exception {
         registerPolicy.create(patient.getIdNumber(), policy);
     }
@@ -59,12 +75,7 @@ public class AdministrativeStaffUseCase {
         return patient;
     }
 
-    public Patient updatePatient(Patient patient) throws Exception {
-        //if (findById(patient.getIdNumber()) != null) {
-            patientPort.update(patient);
-            return patient;
-        //}
-    }
+
 
     public void updatePolicy(String patientIdNumber, Policy policy) {
         policyPort.update(patientIdNumber, policy);
@@ -74,13 +85,7 @@ public class AdministrativeStaffUseCase {
         emergencyContactPort.update(patientIdNumber, emergencyContact);
     }
 
-    public void deletePatient(Patient patient) throws Exception {
-        if (findById(patient.getIdNumber()) != null) {
-            patientPort.deleteById(patient);
-            deletePolicy(patient.getIdNumber());
-            deleteEmergencyContact(patient.getIdNumber());
-        }
-    }
+
 
     public void deletePolicy(String patientIdNumber) {
         if (policyPort.findByPatient(patientIdNumber) != null) {

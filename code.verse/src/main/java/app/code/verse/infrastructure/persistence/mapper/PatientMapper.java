@@ -30,6 +30,16 @@ public class PatientMapper {
         patient.setPhoneNumber(patientEntity.getPhoneNumber());
         patient.setBirthDate(patientEntity.getBirthDate());
         patient.setAddress(patientEntity.getAddress());
+        patient.setGender(patientEntity.getGender());
         return patient;
+    }
+
+    public static void partialUpdate(Patient source, PatientEntity patient) {
+        if (source.getName() != null) patient.setName(source.getName());
+        if (source.getEmail() != null) patient.setEmail(source.getEmail());
+        if (source.getPhoneNumber() != null) patient.setPhoneNumber(source.getPhoneNumber());
+        if (source.getBirthDate() != null) patient.setBirthDate(source.getBirthDate());
+        if (source.getAddress() != null) patient.setAddress(source.getAddress());
+        if (source.getGender() != null) patient.setGender(source.getGender());
     }
 }

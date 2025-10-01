@@ -140,6 +140,7 @@ public class HumanResourceClient {
 
         System.out.println("Seleccione el rol del empleado");
         rol = selectRol();
+        rol = (rol == null || rol.isEmpty() ? employee.getRol() : rol);
 
         System.out.println("Ingrese el nombre de usuario del empleado.");
         userName = reader.nextLine();
@@ -191,7 +192,7 @@ public class HumanResourceClient {
             System.out.println("No hay empleados registrados.");
         } else {
             System.out.printf(HEADER, "Documento", "Nombre", "Cargo", "Usuario");
-            employees.forEach(emp -> System.out.printf(ROW_FORMAT, emp.getIdNumber(), emp.getName(), emp.getRole(), emp.getUserName()));
+            employees.forEach(emp -> System.out.printf(ROW_FORMAT, emp.getIdNumber(), emp.getName(), emp.getRol(), emp.getUserName()));
         }
     }
 
@@ -202,7 +203,7 @@ public class HumanResourceClient {
             System.out.println("No hay empleados registrados.");
         } else {
             System.out.printf(HEADER, "Documento", "Nombre", "Cargo", "Usuario");
-            System.out.printf(ROW_FORMAT, employee.getIdNumber(), employee.getName(), employee.getRole(), employee.getUserName());
+            System.out.printf(ROW_FORMAT, employee.getIdNumber(), employee.getName(), employee.getRol(), employee.getUserName());
         }
         return employee;
     }
@@ -214,7 +215,7 @@ public class HumanResourceClient {
             System.out.println("No hay empleados registrados.");
         } else {
             System.out.printf(HEADER, "Documento", "Nombre", "Cargo", "Usuario");
-            System.out.printf(ROW_FORMAT, employee.getIdNumber(), employee.getName(), employee.getRole(), employee.getUserName());
+            System.out.printf(ROW_FORMAT, employee.getIdNumber(), employee.getName(), employee.getRol(), employee.getUserName());
         }
     }
 
