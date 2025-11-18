@@ -2,11 +2,15 @@ package app.code.verse.domain.services;
 
 import app.code.verse.domain.model.EmergencyContact;
 import app.code.verse.domain.ports.EmergencyContactPort;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RegisterEmergencyContact {
+    @Autowired
     private EmergencyContactPort emergencyContactPort;
 
-    public RegisterEmergencyContact(EmergencyContactPort emergencyContactPort){
+    public RegisterEmergencyContact(EmergencyContactPort emergencyContactPort) {
         this.emergencyContactPort = emergencyContactPort;
     }
 

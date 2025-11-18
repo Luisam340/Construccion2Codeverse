@@ -16,21 +16,23 @@ public class EmployeeBuilder {
     @Autowired
     private PersonValidator personValidator;
 
-    public Employee build(String name, String idNumber, String email, String phoneNumber, LocalDate birthDate, String addres, String rol, String userName, String passwoord) throws Exception {
+    // Construye un objeto Employee validando todos los campos requeridos usando validators
+    public Employee build(String name, String idNumber, String email, String phoneNumber, LocalDate birthDate, String address, String rol, String userName, String passwoord, boolean status) throws Exception {
         Employee employee = new Employee();
         employee.setName(personValidator.nameValidator(name));
         employee.setIdNumber(personValidator.idNumberValidator(idNumber));
         employee.setEmail(personValidator.emailValidator(email));
         employee.setPhoneNumber(personValidator.phoneNumberValidator(phoneNumber));
         employee.setBirthDate(personValidator.birthDateValidator(birthDate));
-        employee.setAddress(personValidator.addressValidator(addres));
-        employee.setRol(employeeValidator.roleValidator(rol));
+        employee.setAddress(personValidator.addressValidator(address));
+        employee.setRol(employeeValidator.rolValidator(rol));
         employee.setUserName(employeeValidator.userNameValidator(userName));
         employee.setPassword(employeeValidator.passwordValidator(passwoord));
-        employee.setStatus(true);
+        employee.setStatus(employee.getStatus());
         return employee;
     }
 
+    // Actualiza los datos de un empleado existente con los nuevos valores proporcionados
     public Employee update(Employee employee, String name, String email, String phoneNumber, LocalDate birthDate, String addres, String rol, String userName, String passwoord) throws Exception {
         employee.setName(name);
         employee.setEmail(email);

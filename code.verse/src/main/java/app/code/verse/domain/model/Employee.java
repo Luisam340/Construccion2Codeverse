@@ -13,7 +13,7 @@ public class Employee extends Person {
         return rol;
     }
 
-    public void setRol(String role) {
+    public void setRol(String rol) {
         this.rol = rol;
     }
 

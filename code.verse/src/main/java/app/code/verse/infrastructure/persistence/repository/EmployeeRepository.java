@@ -7,10 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface EmployeeRepository extends JpaRepository<EmployeeEntity, String> {
+public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> {
     public EmployeeEntity findByIdNumber(String document);
-
     public List<EmployeeEntity> findAll();
-
     public EmployeeEntity findByUserName(String userName);
 }

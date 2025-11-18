@@ -2,11 +2,15 @@ package app.code.verse.domain.services;
 
 import app.code.verse.domain.model.Policy;
 import app.code.verse.domain.ports.PolicyPort;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RegisterPolicy {
+    @Autowired
     private PolicyPort policyPort;
 
-    public RegisterPolicy(PolicyPort policyPort){
+    public RegisterPolicy(PolicyPort policyPort) {
         this.policyPort = policyPort;
     }
 
@@ -16,7 +20,7 @@ public class RegisterPolicy {
     }
 
     private void checkIfPolicytExists(Policy policy) throws Exception {
-        if (policyPort.findPolicyById(policy.getPolicyNumber())!=null) {
+        if (policyPort.findPolicyById(policy.getPolicyNumber()) != null) {
             throw new IllegalArgumentException("Ya hay un cliente con esta póliza registrada");
         }
     }

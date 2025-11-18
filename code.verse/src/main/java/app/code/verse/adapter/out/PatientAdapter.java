@@ -34,7 +34,7 @@ public class PatientAdapter implements PatientPort {
 
     @Override
     public Patient update(Patient patient) throws Exception {
-        PatientEntity entityToUpdate = patientRepository.findByIdNumber(patient.getIdNumber()) ;
+        PatientEntity entityToUpdate = patientRepository.findByIdNumber(patient.getIdNumber());
         PatientMapper.partialUpdate(patient, entityToUpdate);
         PatientEntity save = patientRepository.save(entityToUpdate);
         return PatientMapper.toDomain(save);
@@ -49,18 +49,11 @@ public class PatientAdapter implements PatientPort {
     @Override
     public List<Patient> findByNameContainingIgnoreCase(String name) throws Exception {
         List<PatientEntity> patientEntity = patientRepository.findByNameContainingIgnoreCase(name);
-        return patientEntity.stream()
-                .filter(p -> p.getName() != null &&
-                        p.getName().toLowerCase().contains(name.toLowerCase()))
-                .map(PatientMapper::toDomain)
-                .toList();
+        return patientEntity.stream().filter(p -> p.getName() != null && p.getName().toLowerCase().contains(name.toLowerCase())).map(PatientMapper::toDomain).toList();
     }
 
     @Override
     public List<Patient> findAll() {
-        return patientRepository.findAll()
-                .stream()
-                .map(PatientMapper::toDomain)
-                .collect(Collectors.toList());
+        return patientRepository.findAll().stream().map(PatientMapper::toDomain).collect(Collectors.toList());
     }
 }

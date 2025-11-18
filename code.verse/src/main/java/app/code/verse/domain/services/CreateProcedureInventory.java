@@ -1,19 +1,19 @@
 package app.code.verse.domain.services;
 
 import app.code.verse.domain.model.ProcedureInventory;
-import app.code.verse.domain.model.utils.ValidateDataUtil;
 import app.code.verse.domain.ports.ProcedureInventoryPort;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CreateProcedureInventory {
+    @Autowired
     private ProcedureInventoryPort procedureInventoryPort;
-    private FindProcedureInventory findProcedureInventory;
 
+    // Crea un nuevo registro de inventario de procedimiento validando su unicidad
     public void createProcedureInventory(ProcedureInventory procedureInventory) throws Exception {
-        ValidateDataUtil.validateString(procedureInventory.getIdProcedure(), "The procedure ID cannot be null or empty");
-        ValidateDataUtil.validateString(procedureInventory.getName(), "The procedure name cannot be null or empty");
-
-        if (findProcedureInventory.existsById(procedureInventory)) {
-            throw new IllegalArgumentException("The procedure inventory already exists");
+        if (procedureInventoryPort.existsByIdNumber(procedureInventory.getIdProcedure())) {
+            throw new IllegalArgumentException("El inventario de procedimiento ya existe");
         }
         procedureInventoryPort.save(procedureInventory);
     }
