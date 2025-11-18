@@ -14,7 +14,7 @@ public class PersonValidator extends SimpleValidator {
         return stringValidator(value, "Número de identificación");
     }
 
-    public LocalDate birthDateValidator(LocalDate value) throws Exception {
+    public LocalDate birthDateValidator(LocalDate value) {
         return localDateValidator(value, "fecha de nacimiento");
     }
 

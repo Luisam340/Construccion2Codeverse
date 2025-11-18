@@ -15,38 +15,32 @@ public class HumanResourcesUseCase {
     @Autowired
     private EmployeePort employeePort;
 
+    // Crea un nuevo empleado en el sistema
     public void create(Employee employee) throws Exception {
-        /*Employee employeeById = findById(employee.getIdNumber());
-        Employee employeeByUserName = findByUserName(employee.getUserName());
-        if (employeeByUserName != null){
-            throw new Exception("Ese nombre de usuario ya está en uso por otro empleado");
-        }
-        if (employeeById != null){
-            throw new Exception("Este empleado ya está registrado");
-        }*/
         registerEmployee.create(employee);
     }
 
+    // Actualiza los datos de un empleado existente, validando que el username no esté en uso
     public Employee update(Employee employee) throws Exception {
-        /*Employee employeeData = findById(employee.getIdNumber());
-        if (employeeData != null && !employeeData.getIdNumber().equals(employee.getIdNumber())) {
-            throw new Exception("Ese nombre de usuario ya está en uso por otro empleado");
-        }*/
+        Employee existingEmployee = employeePort.findByUserName(employee.getUserName());
+        if (existingEmployee != null && !existingEmployee.getIdNumber().equals(employee.getIdNumber())) {
+            throw new IllegalArgumentException("Ese nombre de usuario ya está en uso por otro empleado");
+        }
         employeePort.update(employee);
         return employee;
     }
 
+    // Elimina un empleado del sistema
     public void delete(Employee employee) throws Exception {
-
-        //if (employeePort.findByIdNumber(employee.getIdNumber()) != null) {
-            employeePort.deleteById(employee);
-        //}
+        employeePort.deleteById(employee);
     }
 
+    // Obtiene la lista completa de todos los empleados registrados
     public List<Employee> getAllEmployees() {
         return employeePort.findAll();
     }
 
+    // Busca un empleado por su número de identificación
     public Employee findById(String idNumber) {
         Employee employee = employeePort.findByIdNumber(idNumber);
         if (employee == null) {
@@ -55,7 +49,8 @@ public class HumanResourcesUseCase {
         return employee;
     }
 
-    public Employee findByUserName(String userName){
+    // Busca un empleado por su nombre de usuario
+    public Employee findByUserName(String userName) {
         Employee employee = employeePort.findByUserName(userName);
         if (employee == null) {
             throw new IllegalArgumentException("Empleado no encontrado");

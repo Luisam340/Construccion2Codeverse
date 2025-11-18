@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class EmployeeAdapter implements EmployeePort{
+public class EmployeeAdapter implements EmployeePort {
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -26,14 +26,14 @@ public class EmployeeAdapter implements EmployeePort{
 
     @Override
     public Employee deleteById(Employee employee) throws Exception {
-        EmployeeEntity entityToDelete = employeeRepository.findByIdNumber(employee.getIdNumber()) ;
-         employeeRepository.delete(entityToDelete);
+        EmployeeEntity entityToDelete = employeeRepository.findByIdNumber(employee.getIdNumber());
+        employeeRepository.delete(entityToDelete);
         return EmployeeMapper.toDomain(entityToDelete);
     }
 
     @Override
     public Employee update(Employee employee) throws Exception {
-        EmployeeEntity entityToUpdate = employeeRepository.findByIdNumber(employee.getIdNumber()) ;
+        EmployeeEntity entityToUpdate = employeeRepository.findByIdNumber(employee.getIdNumber());
         EmployeeMapper.partialUpdate(employee, entityToUpdate);
         EmployeeEntity save = employeeRepository.save(entityToUpdate);
         return EmployeeMapper.toDomain(save);
@@ -53,10 +53,7 @@ public class EmployeeAdapter implements EmployeePort{
 
     @Override
     public List<Employee> findAll() {
-        return employeeRepository.findAll()
-                .stream()
-                .map(EmployeeMapper::toDomain)
-                .collect(Collectors.toList());
+        return employeeRepository.findAll().stream().map(EmployeeMapper::toDomain).collect(Collectors.toList());
     }
 
 }

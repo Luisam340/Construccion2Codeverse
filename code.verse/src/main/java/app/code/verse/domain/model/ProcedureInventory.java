@@ -5,7 +5,8 @@ public class ProcedureInventory {
     private String name;
     private double cost;
 
-    public ProcedureInventory() { }
+    public ProcedureInventory() {
+    }
 
     public String getIdProcedure() {
         return idProcedure;

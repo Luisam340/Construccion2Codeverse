@@ -5,7 +5,9 @@ import java.util.Map;
 public class MedicalHistory {
     private String idPatient;
     private Map<String, VisitRecord> records;
-    public MedicalHistory() {}
+
+    public MedicalHistory() {
+    }
 
     public String getIdPatient() {
         return idPatient;

@@ -11,17 +11,19 @@ public class RegisterEmployee {
     @Autowired
     private EmployeePort employeePort;
 
+    // Registra un nuevo empleado en el sistema persistiendo sus datos
     public void create(Employee employee) throws Exception {
-        //checkIfEmployeeExists(employee);
+        checkIfEmployeeExists(employee);
         employeePort.create(employee);
     }
 
+    // Verifica que el empleado no exista por su número de identificación o nombre de usuario
     private void checkIfEmployeeExists(Employee employee) throws Exception {
         if (employeePort.findByIdNumber(employee.getIdNumber()) != null) {
-            throw new IllegalArgumentException("El empleado ya existe");
+            throw new IllegalArgumentException("Ya existe un empleado con esa cédula");
         }
         if (employeePort.findByUserName(employee.getUserName()) != null) {
-            throw new Exception("Ese nombre de usuario ya está en uso");
+            throw new IllegalArgumentException("Ese nombre de usuario ya está en uso");
         }
     }
 }

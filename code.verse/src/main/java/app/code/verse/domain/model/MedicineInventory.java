@@ -6,7 +6,8 @@ public class MedicineInventory {
     private int stock;
     private double price;
 
-    public MedicineInventory() { }
+    public MedicineInventory() {
+    }
 
     public String getIdMedicine() {
         return idMedicine;

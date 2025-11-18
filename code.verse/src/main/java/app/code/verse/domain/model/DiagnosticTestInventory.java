@@ -5,7 +5,8 @@ public class DiagnosticTestInventory {
     private String name;
     private double cost;
 
-    public DiagnosticTestInventory() { }
+    public DiagnosticTestInventory() {
+    }
 
     public String getIdExam() {
         return idExam;

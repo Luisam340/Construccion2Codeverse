@@ -31,6 +31,7 @@ public class PatientMapper {
         patient.setBirthDate(patientEntity.getBirthDate());
         patient.setAddress(patientEntity.getAddress());
         patient.setGender(patientEntity.getGender());
+        patient.setStatus(patientEntity.getStatus());
         return patient;
     }
 

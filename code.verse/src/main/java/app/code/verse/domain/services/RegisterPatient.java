@@ -14,11 +14,13 @@ public class RegisterPatient {
         this.patientPort = patientPort;
     }
 
+    // Registra un nuevo paciente en el sistema persistiendo sus datos
     public void create(Patient patient) throws Exception {
         //checkIfPatientExists(patient);
         patientPort.create(patient);
     }
 
+    // Verifica que no exista un paciente con el mismo número de identificación
     private void checkIfPatientExists(Patient patient) throws Exception {
         if (patientPort.findByIdNumber(patient.getIdNumber()) != null) {
             throw new IllegalArgumentException("El paciente ya existe");

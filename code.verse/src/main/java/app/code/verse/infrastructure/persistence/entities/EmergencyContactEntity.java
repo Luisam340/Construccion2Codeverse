@@ -22,7 +22,7 @@ public class EmergencyContactEntity {
     private String phoneNumber;
 
     @OneToOne
-    @JoinColumn(name = "id", nullable = false, unique = true)
+    @JoinColumn(name = "patient_id", nullable = false, unique = true)
     private PatientEntity patient;
 
     public Long getId() {

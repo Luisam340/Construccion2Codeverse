@@ -3,50 +3,50 @@ package app.code.verse.domain.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 public class VisitRecord {
-    private String idVisitRecord;
-    private String idPatient;
+    private Long id;
+    private String patientId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    private LocalDate date;
-    private String idDoctor;
+    private LocalDate visitDate;
+    private String doctorId;
     private String reason;
     private String symptoms;
     private String diagnosis;
-    private Map<String, String> vitalSigns;
-    public VisitRecord() {}
 
-    public String getIdPatient() {
-        return idPatient;
+    public VisitRecord() {
     }
 
-    public void setIdPatient(String idPatient) {
-        this.idPatient = idPatient;
+    public Long getId() {
+        return id;
     }
 
-    public String getIdVisitRecord() {
-        return idVisitRecord;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setIdVisitRecord(String idVisitRecord) {
-        this.idVisitRecord = idVisitRecord;
+    public String getPatientId() {
+        return patientId;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public LocalDate getVisitDate() {
+        return visitDate;
     }
 
-    public String getIdDoctor() {
-        return idDoctor;
+    public void setVisitDate(LocalDate visitDate) {
+        this.visitDate = visitDate;
     }
 
-    public void setIdDoctor(String idDoctor) {
-        this.idDoctor = idDoctor;
+    public String getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(String doctorId) {
+        this.doctorId = doctorId;
     }
 
     public String getReason() {
@@ -71,13 +71,5 @@ public class VisitRecord {
 
     public void setDiagnosis(String diagnosis) {
         this.diagnosis = diagnosis;
-    }
-
-    public Map<String, String> getVitalSigns() {
-        return vitalSigns;
-    }
-
-    public void setVitalSigns(Map<String, String> vitalSigns) {
-        this.vitalSigns = vitalSigns;
     }
 }

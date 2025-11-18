@@ -3,7 +3,7 @@ package app.code.verse.infrastructure.persistence.mapper;
 import app.code.verse.domain.model.Employee;
 import app.code.verse.infrastructure.persistence.entities.EmployeeEntity;
 
-public class EmployeeMapper{
+public class EmployeeMapper {
 
     public static EmployeeEntity toEntity(Employee employee) {
         if (employee == null) return null;
@@ -18,6 +18,7 @@ public class EmployeeMapper{
         entity.setRol(employee.getRol());
         entity.setPassword(employee.getPassword());
         entity.setUserName(employee.getUserName());
+        entity.setStatus(true);
         return entity;
     }
 
@@ -34,6 +35,7 @@ public class EmployeeMapper{
         employee.setRol(employeeEntity.getRol());
         employee.setPassword(employeeEntity.getPassword());
         employee.setUserName(employeeEntity.getUserName());
+        employee.setStatus(employeeEntity.getStatus());
         return employee;
     }
 
