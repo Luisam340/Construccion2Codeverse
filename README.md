@@ -48,19 +48,6 @@ Option 2:
    mvn spring-boot:run
 ```
 
-### 4. Run el Frontend
-
-Option 1: 
-- Open the project path in CMD and run:
-```bash
-   npm install
-   npm run dev
-```
-
-Option 2:
-- Open `index.html` o `login.html`
-
-
 ## Endpoints
 
 Base URL: `http://localhost:8080/hospital/san-rafael`
