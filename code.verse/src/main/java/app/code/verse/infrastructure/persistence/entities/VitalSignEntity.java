@@ -1,20 +1,39 @@
-package app.code.verse.domain.model;
+package app.code.verse.infrastructure.persistence.entities;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-public class VitalSign {
-    private Long id;
-    private Long visitRecordId;
-    private String patientId;
-    private String bloodPressure;
-    private Double temperature;
-    private Integer pulse;
-    private Double oxygenLevel;
-    private LocalDateTime recordedAt;
-    private String recordedBy;
+@Entity
+@Table(name = "vital_sign")
+public class VitalSignEntity {
 
-    public VitalSign() {
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "visit_record_id", nullable = false)
+    private Long visitRecordId;
+
+    @Column(name = "patient_id", nullable = false)
+    private String patientId;
+
+    @Column(name = "blood_pressure", length = 20)
+    private String bloodPressure;
+
+    @Column(name = "temperature")
+    private Double temperature;
+
+    @Column(name = "pulse")
+    private Integer pulse;
+
+    @Column(name = "oxygen_level")
+    private Double oxygenLevel;
+
+    @Column(name = "recorded_at", nullable = false)
+    private LocalDateTime recordedAt;
+
+    @Column(name = "recorded_by", nullable = false)
+    private String recordedBy;
 
     public Long getId() {
         return id;
