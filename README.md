@@ -554,9 +554,6 @@ Base URL: `http://localhost:8080/hospital/san-rafael`
 
 ## Testing
 
-The project includes automated tests in the Postman collection:
-- 64 endpoints with 5-6 automated tests each
-- Tests validate: status code, response time, content-type, response structure, error handling
 - Import the collection `Clinica San Rafael.postman_collection.json` and environment `Variables Clinica San Rafael.postman_environment.json`
 
 ## Documentation
