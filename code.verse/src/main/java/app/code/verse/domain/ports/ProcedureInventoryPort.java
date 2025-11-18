@@ -9,8 +9,9 @@ public interface ProcedureInventoryPort {
     void updateProcedureInventory(String idProcedure, String name, double cost) throws Exception;
     ProcedureInventory findById(String idProcedure);
     List<ProcedureInventory> findAll();
+    List<ProcedureInventory> findByNameContaining(String name);
     void removeProcedureInventory(String idProcedure) throws Exception;
     boolean existsByIdNumber(String idProcedure);
-    void save(ProcedureInventory procedureInventory) throws Exception;
+    ProcedureInventory save(ProcedureInventory procedureInventory) throws Exception;
     void saveDelete(ProcedureInventory procedureInventory) throws Exception;
 }
