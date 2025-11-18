@@ -1,0 +1,4412 @@
+{
+	"info": {
+		"_postman_id": "7a7ec169-2269-4d22-95a1-478652703144",
+		"name": "Clinica San Rafael - API Testing",
+		"description": "# Clínica San Rafael - Colección de API\n\n## Description\n\nCollection organized by user roles to facilitate endpoint testing according to JWT authorization permissions.\n\n## Initial Configuration\n\n1. Select environment **\"Clinica San Rafael - Environment\"**\n    \n2. Configure the variables:\n    \n    - `baseURL`: Server base URL (default: [http://localhost:8080](http://localhost:8080))\n        \n    - `username`: User for login\n        \n    - `password`: Password form login\n        \n\n## Autentication\n\nThe collection includes **automatic login** via a script pre-request. The JWT token is automatically saved in the `jwt_token` variable\n\n## Roles\n\n- **Human Resources**: Employee management\n    \n- **Administrative Staff**: Patient management and billing\n    \n- **Doctor**: Medical history, medical orders\n    \n- **Nurse**: Vital signs, medication administration\n    \n- **Support**: Inventory management\n    \n\n## Test Users (according to data.sql)\n\n- **tbermudez** (Doctor) - Password: lui123M\\*\n    \n- **mrodriguez** (Nurse) - Password: lui123M\\*\n    \n- **cgomez** (Administrative Staff) - Password: lui123M\\*\n    \n- **llopez** (Human Resources) - Password: lui123M\\*\n    \n- **amartin** (Support) - Password: lui123M\\*",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17743089"
+	},
+	"item": [
+		{
+			"name": "Authentication (Public)",
+			"item": [
+				{
+					"name": "POST - Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201\", function () {",
+									"    pm.expect([200, 201]).to.include(pm.response.code);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 5000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is application/json\", function () {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Response has required structure\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property(\"success\");",
+									"    pm.expect(jsonData).to.have.property(\"data\");",
+									"    if (jsonData.success) {",
+									"        pm.expect(jsonData.data).to.have.property(\"token\");",
+									"        pm.expect(jsonData.data).to.have.property(\"user\");",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Success field is boolean\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+									"});",
+									"",
+									"pm.test(\"No unexpected errors in response\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    if (pm.response.code === 200 || pm.response.code === 201) {",
+									"        pm.expect(jsonData.success).to.be.true;",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/hospital/san-rafael/auth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"hospital",
+								"san-rafael",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Autentica un usuario y devuelve un token JWT válido por 24 horas.\n\nUsuarios agregados a la bd automáticamente al ejecutar el programa\n\n| **Usuario** | **Contraseña** |\n| --- | --- |\n|  |  |"
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Validate Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/hospital/san-rafael/auth/validate",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"hospital",
+								"san-rafael",
+								"auth",
+								"validate"
+							]
+						},
+						"description": "Valida si el token JWT actual es válido."
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201\", function () {",
+									"    pm.expect([200, 201]).to.include(pm.response.code);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 5000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is application/json\", function () {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Response has required structure\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property(\"success\");",
+									"    if (jsonData.error) {",
+									"        pm.expect(jsonData).to.have.property(\"error\");",
+									"    } else {",
+									"        pm.expect(jsonData).to.have.property(\"data\");",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Success field is boolean\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+									"});",
+									"",
+									"pm.test(\"No unexpected errors in response\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    if (pm.response.code === 200 || pm.response.code === 201) {",
+									"        pm.expect(jsonData.success).to.be.true;",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			],
+			"description": "Endpoints de autenticación - **Acceso público** (sin token JWT)"
+		},
+		{
+			"name": "Human Resources (Recurso Humanos)",
+			"item": [
+				{
+					"name": "Employee Management",
+					"item": [
+						{
+							"name": "POST - Create employee",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"{{$randomFullName}}\",\n    \"idNumber\": \"{{$randomInt}}\",\n    \"email\": \"{{$randomEmail}}\",\n    \"phoneNumber\": \"{{$randomPhoneNumber}}\",\n    \"birthDate\": \"15/05/1990\",\n    \"address\": \"{{$randomStreetAddress}}\",\n    \"gender\": \"M\",\n    \"rol\": \"Doctor\",\n    \"userName\": \"{{$randomUserName}}\",\n    \"password\": \"Pass*123\",\n    \"status\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/employees",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"employees"
+									]
+								},
+								"description": "Crea un nuevo empleado. **Roles válidos:** Doctor, Enfermera, Personal Administrativo, Recurso Humanos, Soporte"
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 201\", function () {",
+											"    pm.expect([200, 201]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - List all employees",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/employees",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"employees"
+									]
+								},
+								"description": "Retorna la lista completa de empleados."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Get employee by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/employees/{{test_employee_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"employees",
+										"{{test_employee_id}}"
+									]
+								},
+								"description": "Obtiene un empleado por su número de documento."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Search employee by username",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/employees/search?userName=tbermudez",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"employees",
+										"search"
+									],
+									"query": [
+										{
+											"key": "userName",
+											"value": "tbermudez"
+										}
+									]
+								},
+								"description": "Busca un empleado por nombre de usuario."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "PUT - Update employee",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Tomás Bermudez Actualizado\",\n    \"idNumber\": \"{{test_employee_id}}\",\n    \"email\": \"tomasbm.updated@hospital.com\",\n    \"phoneNumber\": \"3123456789\",\n    \"birthDate\": \"11/11/2001\",\n    \"address\": \"Calle 456 Actualizada\",\n    \"rol\": \"Doctor\",\n    \"userName\": \"tbermudez\",\n    \"password\": \"lui123M*\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/employees/{{test_employee_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"employees",
+										"{{test_employee_id}}"
+									]
+								},
+								"description": "Actualiza la información de un empleado existente."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "DELETE - Delete employee",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/employees/{{test_employee_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"employees",
+										"{{test_employee_id}}"
+									]
+								},
+								"description": "Elimina un empleado del sistema."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 204\", function () {",
+											"    pm.expect([200, 204]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				}
+			],
+			"description": "Endpoints para el rol **Recurso Humanos** - Gestión completa de empleados.\n\n**Usuario de prueba:** llopez / lui123M*"
+		},
+		{
+			"name": "Administrative Staff (Personal Administrativo)",
+			"item": [
+				{
+					"name": "Patient Management (Write)",
+					"item": [
+						{
+							"name": "POST - Create patient",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"patient\": {\n        \"idNumber\": \"{{$randomInt}}\",\n        \"name\": \"{{$randomFullName}}\",\n        \"birthDate\": \"15/05/1990\",\n        \"gender\": \"M\",\n        \"address\": \"{{$randomStreetAddress}}\",\n        \"phoneNumber\": \"{{$randomPhoneNumber}}\",\n        \"email\": \"{{$randomEmail}}\"\n    },\n    \"policy\": {\n        \"companyName\": \"Seguros XYZ\",\n        \"policyNumber\": \"POL-{{$randomInt}}\",\n        \"active\": true,\n        \"expirationDate\": \"31/12/2025\"\n    },\n    \"emergencyContact\": {\n        \"name\": \"{{$randomFullName}}\",\n        \"kinship\": \"Hermano/a\",\n        \"phoneNumber\": \"{{$randomPhoneNumber}}\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients"
+									]
+								},
+								"description": "Crea un paciente nuevo con su póliza y contacto de emergencia."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 201\", function () {",
+											"    pm.expect([200, 201]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "PUT - Update patient",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Carolina T. Rodriguez\",\n    \"idNumber\": \"{{test_patient_id}}\",\n    \"email\": \"carolina.updated@mail.com\",\n    \"phoneNumber\": \"3001234567\",\n    \"birthDate\": \"14/05/2005\",\n    \"address\": \"Calle 123 Actualizada\",\n    \"gender\": \"Female\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients/{{test_patient_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients",
+										"{{test_patient_id}}"
+									]
+								},
+								"description": "Actualiza la información básica de un paciente."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "PUT - Update emergency contact",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"María Pérez González\",\n    \"kinship\": \"Madre\",\n    \"phoneNumber\": \"3009876543\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients/{{test_patient_id}}/emergency-contact",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients",
+										"{{test_patient_id}}",
+										"emergency-contact"
+									]
+								},
+								"description": "Actualiza el contacto de emergencia de un paciente."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "PUT - Update policy",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"companyName\": \"Seguros ABC\",\n    \"policyNumber\": \"POL-UPDATED\",\n    \"active\": true,\n    \"expirationDate\": \"31/01/2026\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients/{{test_patient_id}}/policy",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients",
+										"{{test_patient_id}}",
+										"policy"
+									]
+								},
+								"description": "Actualiza la póliza de seguro de un paciente."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "DELETE - Delete patient",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients/{{test_patient_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients",
+										"{{test_patient_id}}"
+									]
+								},
+								"description": "Elimina un paciente del sistema."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 204\", function () {",
+											"    pm.expect([200, 204]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					],
+					"description": "Operaciones de escritura sobre pacientes - Solo **Personal Administrativo**"
+				},
+				{
+					"name": "Patient Consultation (Read)",
+					"item": [
+						{
+							"name": "GET - List all patients",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients"
+									]
+								},
+								"description": "Retorna todos los pacientes con su póliza y contacto de emergencia."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Get patient by document",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients/{{test_patient_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients",
+										"{{test_patient_id}}"
+									]
+								},
+								"description": "Obtiene un paciente por su número de documento."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Search patients by name",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients/search?name=Carolina",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients",
+										"search"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "Carolina"
+										}
+									]
+								},
+								"description": "Busca pacientes por nombre (búsqueda parcial)."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					],
+					"description": "Operaciones de lectura sobre pacientes - **Personal Administrativo**, **Doctor**, **Enfermera**"
+				},
+				{
+					"name": "Invoice Management",
+					"item": [
+						{
+							"name": "POST - Generate invoice",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"patientId\": \"{{test_patient_id}}\",\n    \"doctorName\": \"Dr. Tomás Bermúdez\",\n    \"orderNumbers\": [\"{{test_order_number}}\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/invoices/generate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"invoices",
+										"generate"
+									]
+								},
+								"description": "Genera una factura para un paciente basada en órdenes médicas. **Solo Personal Administrativo**"
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 201\", function () {",
+											"    pm.expect([200, 201]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Get invoices by patient",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/invoices/patient/{{test_patient_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"invoices",
+										"patient",
+										"{{test_patient_id}}"
+									]
+								},
+								"description": "Obtiene todas las facturas de un paciente."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Get invoices by patient and date range",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/invoices/patient/{{test_patient_id}}/date-range?startDate=01-01-2024&endDate=31-12-2025",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"invoices",
+										"patient",
+										"{{test_patient_id}}",
+										"date-range"
+									],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "01-01-2024"
+										},
+										{
+											"key": "endDate",
+											"value": "31-12-2025"
+										}
+									]
+								},
+								"description": "Obtiene facturas de un paciente filtradas por rango de fechas."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Get invoice by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/invoices/{{test_invoice_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"invoices",
+										"{{test_invoice_id}}"
+									]
+								},
+								"description": "Obtiene una factura específica por su ID."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Get year copay total",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/invoices/patient/{{test_patient_id}}/copay-total/2024",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"invoices",
+										"patient",
+										"{{test_patient_id}}",
+										"copay-total",
+										"2024"
+									]
+								},
+								"description": "Obtiene el total de copagos de un paciente en un año específico."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					],
+					"description": "Gestión de facturas - **Personal Administrativo** (generar) + **Doctor** (consultar)"
+				}
+			],
+			"description": "Endpoints para el rol **Personal Administrativo** - Gestión de pacientes y facturación.\n\n**Usuario de prueba:** cgomez / lui123M*"
+		},
+		{
+			"name": "Doctor",
+			"item": [
+				{
+					"name": "Patient Consultation (Read)",
+					"item": [
+						{
+							"name": "GET - List all patients",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients"
+									]
+								},
+								"description": "Retorna todos los pacientes."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Get patient by document",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients/{{test_patient_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients",
+										"{{test_patient_id}}"
+									]
+								},
+								"description": "Obtiene un paciente específico."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Search patients by name",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients/search?name=Carolina",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients",
+										"search"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "Carolina"
+										}
+									]
+								},
+								"description": "Busca pacientes por nombre."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					],
+					"description": "Consulta de pacientes - **Doctor**, **Enfermera**, **Personal Administrativo**"
+				},
+				{
+					"name": "Visit Records",
+					"item": [
+						{
+							"name": "POST - Create visit record",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"patientId\": \"{{test_patient_id}}\",\n    \"doctorId\": \"{{test_doctor_id}}\",\n    \"reason\": \"Consulta general\",\n    \"symptoms\": \"Dolor de cabeza y fiebre\",\n    \"diagnosis\": \"Migraña\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/doctors/visit-records",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"doctors",
+										"visit-records"
+									]
+								},
+								"description": "Crea un nuevo registro de visita médica."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 201\", function () {",
+											"    pm.expect([200, 201]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Medical History",
+					"item": [
+						{
+							"name": "GET - Medical history by patient",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/doctors/medical-history/patient/{{test_patient_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"doctors",
+										"medical-history",
+										"patient",
+										"{{test_patient_id}}"
+									]
+								},
+								"description": "Obtiene toda la historia clínica de un paciente."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Medical history by patient and date",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/doctors/medical-history/patient/{{test_patient_id}}/date/01-11-2024",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"doctors",
+										"medical-history",
+										"patient",
+										"{{test_patient_id}}",
+										"date",
+										"01-11-2024"
+									]
+								},
+								"description": "Obtiene la historia clínica de un paciente en una fecha específica."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Medical history by doctor",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/doctors/medical-history/doctor/{{test_doctor_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"doctors",
+										"medical-history",
+										"doctor",
+										"{{test_doctor_id}}"
+									]
+								},
+								"description": "Obtiene todas las historias clínicas creadas por un doctor."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Medical Orders",
+					"item": [
+						{
+							"name": "POST - Create order",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"orderNumber\": \"ORD-{{$timestamp}}\",\n    \"patientId\": \"{{test_patient_id}}\",\n    \"doctorId\": \"{{test_doctor_id}}\",\n    \"items\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/doctors/orders",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"doctors",
+										"orders"
+									]
+								},
+								"description": "Crea una nueva orden médica para un paciente."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 201\", function () {",
+											"    pm.expect([200, 201]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - All orders",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/doctors/orders",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"doctors",
+										"orders"
+									]
+								},
+								"description": "Lista todas las órdenes médicas."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Order by number",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/doctors/orders/{{test_order_number}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"doctors",
+										"orders",
+										"{{test_order_number}}"
+									]
+								},
+								"description": "Obtiene una orden específica por número."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Orders by patient",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/doctors/orders/patient/{{test_patient_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"doctors",
+										"orders",
+										"patient",
+										"{{test_patient_id}}"
+									]
+								},
+								"description": "Obtiene todas las órdenes de un paciente."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Orders by doctor",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/doctors/orders/doctor/{{test_doctor_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"doctors",
+										"orders",
+										"doctor",
+										"{{test_doctor_id}}"
+									]
+								},
+								"description": "Obtiene todas las órdenes creadas por un doctor."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Invoice Consultation",
+					"item": [
+						{
+							"name": "GET - Get invoices by patient",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/invoices/patient/{{test_patient_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"invoices",
+										"patient",
+										"{{test_patient_id}}"
+									]
+								}
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Get invoice by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/invoices/{{test_invoice_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"invoices",
+										"{{test_invoice_id}}"
+									]
+								}
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					],
+					"description": "Consulta de facturas - **Doctor** y **Personal Administrativo**"
+				}
+			],
+			"description": "Endpoints para el rol **Doctor** - Historia clínica, órdenes médicas, consulta de pacientes.\n\n**Usuario de prueba:** tbermudez / lui123M*"
+		},
+		{
+			"name": "Nurse (Enfermera)",
+			"item": [
+				{
+					"name": "Patient Consultation (Read)",
+					"item": [
+						{
+							"name": "GET - List all patients",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients"
+									]
+								}
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Get patient by document",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients/{{test_patient_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients",
+										"{{test_patient_id}}"
+									]
+								}
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Search patients by name",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/patients/search?name=Carolina",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"patients",
+										"search"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "Carolina"
+										}
+									]
+								}
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					],
+					"description": "Consulta de pacientes"
+				},
+				{
+					"name": "Vital Signs",
+					"item": [
+						{
+							"name": "POST - Register vital signs",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"visitRecordId\": {{test_visit_record_id}},\n    \"patientId\": \"{{test_patient_id}}\",\n    \"bloodPressure\": \"120/80\",\n    \"temperature\": 36.5,\n    \"pulse\": 72,\n    \"oxygenLevel\": 98.0,\n    \"recordedBy\": \"{{test_nurse_id}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/nurses/vital-signs",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"nurses",
+										"vital-signs"
+									]
+								},
+								"description": "Registra los signos vitales de un paciente en una visita."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 201\", function () {",
+											"    pm.expect([200, 201]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Vital signs by patient",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/nurses/vital-signs/patient/{{test_patient_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"nurses",
+										"vital-signs",
+										"patient",
+										"{{test_patient_id}}"
+									]
+								},
+								"description": "Obtiene todos los registros de signos vitales de un paciente."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Vital signs by visit record",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/nurses/vital-signs/visit-record/{{test_visit_record_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"nurses",
+										"vital-signs",
+										"visit-record",
+										"{{test_visit_record_id}}"
+									]
+								},
+								"description": "Obtiene los signos vitales de un registro de visita específico."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Medicine Administration",
+					"item": [
+						{
+							"name": "POST - Register medicine administration",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"visitRecordId\": {{test_visit_record_id}},\n    \"patientId\": \"{{test_patient_id}}\",\n    \"orderNumber\": \"{{test_order_number}}\",\n    \"itemNumber\": 1,\n    \"medicineName\": \"Acetaminofén\",\n    \"doseAdministered\": \"500mg\",\n    \"administeredBy\": \"{{test_nurse_id}}\",\n    \"observations\": \"Sin novedades\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/nurses/medicine-administration",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"nurses",
+										"medicine-administration"
+									]
+								},
+								"description": "Registra la administración de un medicamento a un paciente."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 201\", function () {",
+											"    pm.expect([200, 201]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Medicine administration by patient",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/nurses/medicine-administration/patient/{{test_patient_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"nurses",
+										"medicine-administration",
+										"patient",
+										"{{test_patient_id}}"
+									]
+								},
+								"description": "Obtiene todos los registros de administración de medicamentos de un paciente."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Medicine administration by visit record",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/nurses/medicine-administration/visit-record/{{test_visit_record_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"nurses",
+										"medicine-administration",
+										"visit-record",
+										"{{test_visit_record_id}}"
+									]
+								},
+								"description": "Obtiene las administraciones de medicamentos de un registro de visita."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Medicine administration by order",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/nurses/medicine-administration/order/{{test_order_number}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"nurses",
+										"medicine-administration",
+										"order",
+										"{{test_order_number}}"
+									]
+								},
+								"description": "Obtiene las administraciones relacionadas a una orden médica."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Visit Records",
+					"item": [
+						{
+							"name": "POST - Create visit record",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"patientId\": \"{{test_patient_id}}\",\n    \"doctorId\": \"{{test_doctor_id}}\",\n    \"reason\": \"Consulta de enfermería\",\n    \"symptoms\": \"Fiebre\",\n    \"diagnosis\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/nurses/visit-records",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"nurses",
+										"visit-records"
+									]
+								},
+								"description": "Crea un registro de visita desde enfermería."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 201\", function () {",
+											"    pm.expect([200, 201]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Visit record by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/nurses/visit-records/{{test_visit_record_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"nurses",
+										"visit-records",
+										"{{test_visit_record_id}}"
+									]
+								},
+								"description": "Obtiene un registro de visita por ID."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Visit records by patient",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/nurses/visit-records/patient/{{test_patient_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"nurses",
+										"visit-records",
+										"patient",
+										"{{test_patient_id}}"
+									]
+								},
+								"description": "Obtiene todos los registros de visita de un paciente."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Visit records by doctor",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/nurses/visit-records/doctor/{{test_doctor_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"nurses",
+										"visit-records",
+										"doctor",
+										"{{test_doctor_id}}"
+									]
+								},
+								"description": "Obtiene los registros de visita por doctor."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				}
+			],
+			"description": "Endpoints para el rol **Enfermera** - Signos vitales, administración de medicamentos, registros de visita.\n\n**Usuario de prueba:** mrodriguez / lui123M*"
+		},
+		{
+			"name": "Information Support (Soporte)",
+			"item": [
+				{
+					"name": "Medicine Inventory",
+					"item": [
+						{
+							"name": "POST - Create medicine",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"idMedicine\": \"MED-{{$timestamp}}\",\n    \"name\": \"{{$randomProductName}}\",\n    \"stock\": {{$randomInt}},\n    \"price\": {{$randomPrice}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/medicines",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"medicines"
+									]
+								},
+								"description": "Crea un nuevo medicamento en el inventario."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 201\", function () {",
+											"    pm.expect([200, 201]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - List all medicines",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/medicines",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"medicines"
+									]
+								},
+								"description": "Retorna todos los medicamentos del inventario."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Get medicine by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/medicines/{{test_medicine_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"medicines",
+										"{{test_medicine_id}}"
+									]
+								},
+								"description": "Obtiene un medicamento específico por ID."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "PUT - Update medicine",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Acetaminofén 500mg\",\n    \"stock\": 150,\n    \"price\": 2800.00\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/medicines/{{test_medicine_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"medicines",
+										"{{test_medicine_id}}"
+									]
+								},
+								"description": "Actualiza un medicamento existente."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "DELETE - Delete medicine",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/medicines/{{test_medicine_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"medicines",
+										"{{test_medicine_id}}"
+									]
+								},
+								"description": "Elimina un medicamento del inventario."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 204\", function () {",
+											"    pm.expect([200, 204]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Diagnostic Test Inventory",
+					"item": [
+						{
+							"name": "POST - Create diagnostic test",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"idExam\": \"EXAM-{{$timestamp}}\",\n    \"name\": \"{{$randomProductName}} Test\",\n    \"cost\": {{$randomPrice}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/diagnostic-tests",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"diagnostic-tests"
+									]
+								},
+								"description": "Crea un nuevo examen diagnóstico."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 201\", function () {",
+											"    pm.expect([200, 201]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - List all diagnostic tests",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/diagnostic-tests",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"diagnostic-tests"
+									]
+								},
+								"description": "Retorna todos los exámenes diagnósticos."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Get diagnostic test by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/diagnostic-tests/{{test_exam_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"diagnostic-tests",
+										"{{test_exam_id}}"
+									]
+								},
+								"description": "Obtiene un examen específico por ID."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "PUT - Update diagnostic test",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Hemograma completo\",\n    \"cost\": 70000.00\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/diagnostic-tests/{{test_exam_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"diagnostic-tests",
+										"{{test_exam_id}}"
+									]
+								},
+								"description": "Actualiza un examen diagnóstico."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "DELETE - Delete diagnostic test",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/diagnostic-tests/{{test_exam_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"diagnostic-tests",
+										"{{test_exam_id}}"
+									]
+								},
+								"description": "Elimina un examen diagnóstico."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 204\", function () {",
+											"    pm.expect([200, 204]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Procedure Inventory",
+					"item": [
+						{
+							"name": "POST - Create procedure",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"idProcedure\": \"PROC-{{$timestamp}}\",\n    \"name\": \"{{$randomProductName}} Procedure\",\n    \"cost\": {{$randomPrice}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/procedures",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"procedures"
+									]
+								},
+								"description": "Crea un nuevo procedimiento."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 201\", function () {",
+											"    pm.expect([200, 201]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - List all procedures",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/procedures",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"procedures"
+									]
+								},
+								"description": "Retorna todos los procedimientos."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "GET - Get procedure by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/procedures/{{test_procedure_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"procedures",
+										"{{test_procedure_id}}"
+									]
+								},
+								"description": "Obtiene un procedimiento específico por ID."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "PUT - Update procedure",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Curación de heridas\",\n    \"cost\": 50000.00\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/procedures/{{test_procedure_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"procedures",
+										"{{test_procedure_id}}"
+									]
+								},
+								"description": "Actualiza un procedimiento."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"pm.test(\"Response has required structure\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"success\");",
+											"    if (jsonData.error) {",
+											"        pm.expect(jsonData).to.have.property(\"error\");",
+											"    } else {",
+											"        pm.expect(jsonData).to.have.property(\"data\");",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Success field is boolean\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.be.a(\"boolean\");",
+											"});",
+											"",
+											"pm.test(\"No unexpected errors in response\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (pm.response.code === 200 || pm.response.code === 201) {",
+											"        pm.expect(jsonData.success).to.be.true;",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "DELETE - Delete procedure",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/hospital/san-rafael/procedures/{{test_procedure_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"hospital",
+										"san-rafael",
+										"procedures",
+										"{{test_procedure_id}}"
+									]
+								},
+								"description": "Elimina un procedimiento."
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 204\", function () {",
+											"    pm.expect([200, 204]).to.include(pm.response.code);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 5000ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				}
+			],
+			"description": "Endpoints para el rol **Soporte** - Gestión completa de inventarios (medicamentos, exámenes, procedimientos).\n\n**Usuario de prueba:** amartin / lui123M*"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Login automático antes de cada request (excepto login)",
+					"const loginUrl = pm.environment.get('baseURL') + '/hospital/san-rafael/auth/login';",
+					"const username = pm.environment.get('username');",
+					"const password = pm.environment.get('password');",
+					"",
+					"// Solo ejecutar login si no es la petición de login y hay credenciales",
+					"if (!pm.request.url.toString().includes('/auth/login') && username && password) {",
+					"    pm.sendRequest({",
+					"        url: loginUrl,",
+					"        method: 'POST',",
+					"        header: {",
+					"            'Content-Type': 'application/json'",
+					"        },",
+					"        body: {",
+					"            mode: 'raw',",
+					"            raw: JSON.stringify({",
+					"                username: username,",
+					"                password: password",
+					"            })",
+					"        }",
+					"    }, function (err, response) {",
+					"        if (err) {",
+					"            console.error('Error en login automático:', err);",
+					"        } else if (response.code === 200) {",
+					"            const jsonData = response.json();",
+					"            if (jsonData.success && jsonData.data && jsonData.data.token) {",
+					"                pm.environment.set('jwt_token', jsonData.data.token);",
+					"                pm.environment.set('current_user_id', jsonData.data.user.idNumber);",
+					"                pm.environment.set('current_user_role', jsonData.data.user.role);",
+					"                console.log('✅ Login automático exitoso');",
+					"                console.log('👤 Usuario:', jsonData.data.user.name);",
+					"                console.log('🔑 Rol:', jsonData.data.user.role);",
+					"            } else {",
+					"                console.error('❌ No se pudo obtener el token');",
+					"            }",
+					"        } else {",
+					"            console.error('❌ Login falló con código:', response.code);",
+					"        }",
+					"    });",
+					"}"
+				]
+			}
+		}
+	]
+}
