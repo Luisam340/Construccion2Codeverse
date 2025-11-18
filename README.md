@@ -6,6 +6,7 @@ University project - Software Development 2 | Java + Spring Boot
 
 - [Luisa Mosquera](https://github.com/Luisam340)
 - [Santiago Arboleda](https://github.com/SantiCadavid)
+- [Marlon Castañeda](https://github.com/MarlonC102)
 
 ## Technology in which it was developed
 
